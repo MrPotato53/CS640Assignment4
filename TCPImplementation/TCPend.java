@@ -1,7 +1,5 @@
-// package TCPImplementation;
-
-import TCPImplementation.TCPSender;
-import TCPImplementation.TCPReceiver;
+import TCPSender;
+import TCPReceiver;
 
 import java.io.IOException;
 
