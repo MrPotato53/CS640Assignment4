@@ -275,11 +275,17 @@ public class TCPSender {
                 
                 // Remove acknowledged packets and their retry counts
                 while (baseSequenceNumber < ackNumber) {
+                    // 1) look up the payload so you can get its length
+                    byte[] payload = unackedPackets.get(baseSequenceNumber);
+                    int    len     = (payload != null ? payload.length : 0);
+                
+                    // 2) now remove all bookkeeping for that packet
                     unackedPackets.remove(baseSequenceNumber);
                     packetTimestamps.remove(baseSequenceNumber);
-                    retryCount.remove(baseSequenceNumber);  // Remove retry count
-                    baseSequenceNumber += unackedPackets.get(baseSequenceNumber) != null ? 
-                                       unackedPackets.get(baseSequenceNumber).length : 0;
+                    retryCount.remove(baseSequenceNumber);
+                
+                    // 3) finally advance the window
+                    baseSequenceNumber += len;
                 }
             }
         }
