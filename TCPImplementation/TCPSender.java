@@ -298,6 +298,12 @@ public class TCPSender {
     }
 
     private void closeConnection() throws IOException {
+
+        // Wait for all packets to be acknowledged
+        while (baseSequenceNumber < nextSequenceNumber) {
+            Thread.sleep(50);
+        }
+
         // Send FIN+ACK using the current ACK
         TCPPacket finPacket = new TCPPacket(null, nextSequenceNumber, lastAckNumber, false, true, false);
         sendPacket(finPacket);
