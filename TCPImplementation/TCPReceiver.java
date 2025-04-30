@@ -81,6 +81,7 @@ public class TCPReceiver {
                 TCPPacket synAck = new TCPPacket(null, 0, packet.getSequenceNumber() + 1, 
                                                true, false, true);
                 synAck.setTimestamp(sentTs);
+                System.out.println("SENDING SYN-ACK to " + senderAddress + ":" + senderPort);
                 sendPacket(synAck, senderAddress, senderPort);
                 connectionEstablished = true;
                 expectedSequenceNumber = 1;

@@ -204,6 +204,7 @@ public class TCPSender {
         while (!connectionClosed) {
             try {
                 socket.receive(datagram);
+                System.out.println("RECEIVED PACKET");
                 byte[] received = Arrays.copyOf(datagram.getData(), datagram.getLength());
                 TCPPacket packet = TCPPacket.deserialize(received);
                 
