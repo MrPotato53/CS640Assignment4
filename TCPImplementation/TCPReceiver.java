@@ -6,6 +6,8 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class TCPReceiver {
+    private static final int HEADER_SIZE = 24;
+
     private DatagramSocket socket;
     private long startTime;
     private String filename;
@@ -41,7 +43,7 @@ public class TCPReceiver {
 
     public void start() throws IOException {
         // Use MTU for the receive buffer
-        byte[] buffer = new byte[mtu];
+        byte[] buffer = new byte[mtu + HEADER_SIZE];
         DatagramPacket datagram = new DatagramPacket(buffer, buffer.length);
 
         
@@ -91,7 +93,7 @@ public class TCPReceiver {
         }
 
         // Reject packets exceeding advertised MTU payload
-        int payloadLimit = mtu - 24; // header is 16 bytes
+        int payloadLimit = mtu;
         if (packet.getLength() > payloadLimit) {
             // drop
             return;

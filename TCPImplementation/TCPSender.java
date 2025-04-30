@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class TCPSender {
+    private static final int HEADER_SIZE = 24;
     private long startTime;
 
     private static final int MAX_RETRIES = 16;
@@ -120,7 +121,7 @@ public class TCPSender {
     private void sendFile() throws IOException {
         File file = new File(filename);
         try (FileInputStream fis = new FileInputStream(file)) {
-            byte[] buffer = new byte[mtu - 24]; // Subtract header size
+            byte[] buffer = new byte[mtu];
             int bytesRead;
             
             while ((bytesRead = fis.read(buffer)) != -1) {
@@ -205,7 +206,7 @@ public class TCPSender {
     }
 
     private void receiveLoop() {
-        byte[] buffer = new byte[mtu];
+        byte[] buffer = new byte[mtu + HEADER_SIZE];
         DatagramPacket datagram = new DatagramPacket(buffer, buffer.length);
         
         while (!connectionClosed) {
