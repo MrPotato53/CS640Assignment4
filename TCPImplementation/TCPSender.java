@@ -120,7 +120,7 @@ public class TCPSender {
     private void sendFile() throws IOException {
         File file = new File(filename);
         try (FileInputStream fis = new FileInputStream(file)) {
-            byte[] buffer = new byte[mtu - 16]; // Subtract header size
+            byte[] buffer = new byte[mtu - 24]; // Subtract header size
             int bytesRead;
             
             while ((bytesRead = fis.read(buffer)) != -1) {

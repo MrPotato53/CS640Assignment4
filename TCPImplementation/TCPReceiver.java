@@ -91,7 +91,7 @@ public class TCPReceiver {
         }
 
         // Reject packets exceeding advertised MTU payload
-        int payloadLimit = mtu - 16; // header is 16 bytes
+        int payloadLimit = mtu - 24; // header is 16 bytes
         if (packet.getLength() > payloadLimit) {
             // drop
             return;
