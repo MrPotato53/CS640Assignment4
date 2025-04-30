@@ -21,7 +21,7 @@ public class TCPSender {
     private int windowSize;
     private int baseSequenceNumber;
     private int nextSequenceNumber;
-    private int expectedAck;
+    private int peerNextSequenceNumber;
     private long timeout;
     private long estimatedRTT;
     private long deviationRTT;
@@ -50,7 +50,7 @@ public class TCPSender {
         this.windowSize = windowSize;
         this.baseSequenceNumber = 0;
         this.nextSequenceNumber = 0;
-        this.expectedAck = 0;
+        this.peerNextSequenceNumber = 0;
         this.timeout = INITIAL_TIMEOUT;
         this.estimatedRTT = 0;
         this.deviationRTT = 0;
@@ -107,7 +107,7 @@ public class TCPSender {
         TCPPacket ackPacket = new TCPPacket(
             /*data=*/null,
             /*seq=*/nextSequenceNumber,
-            /*ack=*/lastAckNumber,
+            /*ack=*/peerNextSequenceNumber,
             /*syn=*/false,
             /*fin=*/false,
             /*ack=*/true
@@ -139,7 +139,7 @@ public class TCPSender {
         }
 
         // use the most recent ACK from the receiver, not 0
-        TCPPacket packet = new TCPPacket(data, nextSequenceNumber, lastAckNumber, false, false, true);
+        TCPPacket packet = new TCPPacket(data, nextSequenceNumber, peerNextSequenceNumber, false, false, true);
         sendPacket(packet);
         nextSequenceNumber += data.length;
     }
@@ -228,6 +228,7 @@ public class TCPSender {
 
         if (packet.isSynFlag() && packet.isAckFlag()) {
             lastAckNumber = packet.getSequenceNumber() + 1;
+            peerNextSequenceNumber = packet.getSequenceNumber() + 1;
             connectionEstablished = true;
             return;
         }
@@ -274,17 +275,11 @@ public class TCPSender {
                 
                 // Remove acknowledged packets and their retry counts
                 while (baseSequenceNumber < ackNumber) {
-                    // 1) grab the packet (to get its length)
-                    byte[] data = unackedPackets.get(baseSequenceNumber);
-                    int       len = (data != null ? data.length : 0);
-
-                    // 2) now remove everything
                     unackedPackets.remove(baseSequenceNumber);
                     packetTimestamps.remove(baseSequenceNumber);
-                    retryCount.remove(baseSequenceNumber);
-
-                    // 3) advance by the actual byte‐count
-                    baseSequenceNumber += len;
+                    retryCount.remove(baseSequenceNumber);  // Remove retry count
+                    baseSequenceNumber += unackedPackets.get(baseSequenceNumber) != null ? 
+                                       unackedPackets.get(baseSequenceNumber).length : 0;
                 }
             }
         }
