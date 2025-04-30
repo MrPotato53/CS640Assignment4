@@ -320,7 +320,7 @@ public class TCPSender {
         }
 
         // Send FIN+ACK using the current ACK
-        TCPPacket finPacket = new TCPPacket(null, nextSequenceNumber++, lastAckNumber, false, true, false);
+        TCPPacket finPacket = new TCPPacket(null, nextSequenceNumber++, peerNextSequenceNumber, false, true, false);
         sendPacket(finPacket);
         
         // Wait for FIN-ACK
