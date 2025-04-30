@@ -1,3 +1,5 @@
+package TCPImplementation;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -137,6 +139,10 @@ public class TCPPacket {
         
         // Take one's complement
         return (short)(~sum & 0xFFFF);
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     // Getters

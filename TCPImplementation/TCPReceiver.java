@@ -1,8 +1,10 @@
+package TCPImplementation;
+import TCPImplementation.TCPPacket;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
-// import TCPPacket;
 
 public class TCPReceiver {
     private DatagramSocket socket;

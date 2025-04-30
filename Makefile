@@ -1,22 +1,14 @@
-JC = javac
-JVM = java
-SRCDIR = TCP
-BINDIR = TCP
+JAVAC = javac
+SRC_DIR = TCPImplementation
+JAVA_SOURCES := $(wildcard $(SRC_DIR)/*.java)
 
-.SUFFIXES: .java .class
+.PHONY: all clean run
 
-$(BINDIR)/%.class: $(SRCDIR)/%.java
-	$(JC) -d $(BINDIR) $<
+all: compile
 
-CLASSES = $(addprefix $(BINDIR)/, \
-	TCPend.class \
-	TCPPacket.class \
-	TCPSender.class \
-	TCPReceiver.class)
-
-default: $(CLASSES)
+compile:
+	$(JAVAC) -d . $(JAVA_SOURCES)
 
 clean:
-	rm -f $(CLASSES)
-
-.PHONY: default clean 
+	@echo "Cleaning up class files…"
+	find $(SRC_DIR) -name "*.class" -delete
