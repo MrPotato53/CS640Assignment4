@@ -90,7 +90,7 @@ public class TCPSender {
     private void establishConnection() throws IOException {
         // Send SYN
         this.startTime = System.nanoTime();
-        TCPPacket synPacket = new TCPPacket(null, baseSequenceNumber, 0, true, false, false);
+        TCPPacket synPacket = new TCPPacket(null, nextSequenceNumber++, 0, true, false, false);
         sendPacket(synPacket);
         
         // Wait for SYN-ACK
@@ -227,6 +227,7 @@ public class TCPSender {
         printPacketInfo("rcv", packet);
 
         if (packet.isSynFlag() && packet.isAckFlag()) {
+            lastAckNumber = packet.getSequenceNumber() + 1;
             connectionEstablished = true;
             return;
         }
@@ -310,7 +311,7 @@ public class TCPSender {
         }
 
         // Send FIN+ACK using the current ACK
-        TCPPacket finPacket = new TCPPacket(null, nextSequenceNumber, lastAckNumber, false, true, false);
+        TCPPacket finPacket = new TCPPacket(null, nextSequenceNumber++, lastAckNumber, false, true, false);
         sendPacket(finPacket);
         
         // Wait for FIN-ACK
