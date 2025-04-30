@@ -222,6 +222,18 @@ public class TCPSender {
 
     private void handleReceivedPacket(TCPPacket packet) {
         printPacketInfo("rcv", packet);
+
+        if (packet.isSynFlag() && packet.isAckFlag()) {
+            connectionEstablished = true;
+            return;
+        }
+        
+        if (packet.isFinFlag() && packet.isAckFlag()) {
+            // record the peer’s FIN seq so we can ACK it
+            lastFinSequence = packet.getSequenceNumber();
+            connectionClosed = true;
+            return;
+        }
         
         if (packet.isAckFlag()) {
             int ackNumber = packet.getAcknowledgment();
@@ -265,16 +277,6 @@ public class TCPSender {
                                        unackedPackets.get(baseSequenceNumber).length : 0;
                 }
             }
-        }
-        
-        if (packet.isSynFlag() && packet.isAckFlag()) {
-            connectionEstablished = true;
-        }
-        
-        if (packet.isFinFlag() && packet.isAckFlag()) {
-            // record the peer’s FIN seq so we can ACK it
-            lastFinSequence = packet.getSequenceNumber();
-            connectionClosed = true;
         }
     }
 
