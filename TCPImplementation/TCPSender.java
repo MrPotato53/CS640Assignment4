@@ -67,11 +67,12 @@ public class TCPSender {
     }
 
     public void start() throws IOException {
-        // Start connection
-        establishConnection();
-        
+
         // Start receiving thread
         new Thread(this::receiveLoop).start();
+
+        // Start connection
+        establishConnection();
         
         // Send file
         sendFile();
@@ -198,7 +199,7 @@ public class TCPSender {
     }
 
     private void receiveLoop() {
-        byte[] buffer = new byte[65535];
+        byte[] buffer = new byte[mtu];
         DatagramPacket datagram = new DatagramPacket(buffer, buffer.length);
         
         while (!connectionClosed) {
