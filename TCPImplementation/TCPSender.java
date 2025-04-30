@@ -301,7 +301,12 @@ public class TCPSender {
 
         // Wait for all packets to be acknowledged
         while (baseSequenceNumber < nextSequenceNumber) {
-            Thread.sleep(50);
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IOException("Close Connection interrupted");
+            }
         }
 
         // Send FIN+ACK using the current ACK
@@ -347,6 +352,7 @@ public class TCPSender {
     }
 
     public void close() {
+        scheduler.shutdownNow();
         socket.close();
         scheduler.shutdown();
     }
