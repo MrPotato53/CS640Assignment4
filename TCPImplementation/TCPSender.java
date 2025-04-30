@@ -113,6 +113,8 @@ public class TCPSender {
             /*ack=*/true
         );
         sendPacket(ackPacket);
+
+        baseSequenceNumber = nextSequenceNumber;
     }
 
     private void sendFile() throws IOException {
