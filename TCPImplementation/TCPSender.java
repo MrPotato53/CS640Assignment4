@@ -193,7 +193,7 @@ public class TCPSender {
                 // Increment retry count
                 retryCount.put(sequenceNumber, retries + 1);
                 
-                TCPPacket packet = new TCPPacket(data, sequenceNumber, lastAckNumber, false, false, true);
+                TCPPacket packet = new TCPPacket(data, sequenceNumber, peerNextSequenceNumber, false, false, true);
                 sendPacket(packet);
                 totalRetransmissions++;
             }
