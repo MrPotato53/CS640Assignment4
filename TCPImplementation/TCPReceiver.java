@@ -44,12 +44,10 @@ public class TCPReceiver {
         byte[] buffer = new byte[mtu];
         DatagramPacket datagram = new DatagramPacket(buffer, buffer.length);
 
-        System.out.println("STARTING CONNECTION");
         
         while (!connectionClosed) {
             try {
                 socket.receive(datagram);
-                System.out.println("RECEIVED PACKET");
                 byte[] received = Arrays.copyOf(datagram.getData(), datagram.getLength());
                 TCPPacket packet = TCPPacket.deserialize(received);
                 
@@ -80,10 +78,10 @@ public class TCPReceiver {
         if (!connectionEstablished) {
             if (packet.isSynFlag() && !packet.isAckFlag()) {
                 // Received SYN, send SYN-ACK
+                this.startTime = System.nanoTime();
                 TCPPacket synAck = new TCPPacket(null, 0, packet.getSequenceNumber() + 1, 
                                                true, false, true);
                 synAck.setTimestamp(sentTs);
-                System.out.println("SENDING SYN-ACK to " + senderAddress + ":" + senderPort);
                 sendPacket(synAck, senderAddress, senderPort);
                 connectionEstablished = true;
                 expectedSequenceNumber = 1;

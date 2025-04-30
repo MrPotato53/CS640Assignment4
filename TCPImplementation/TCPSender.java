@@ -89,6 +89,7 @@ public class TCPSender {
 
     private void establishConnection() throws IOException {
         // Send SYN
+        this.startTime = System.nanoTime();
         TCPPacket synPacket = new TCPPacket(null, baseSequenceNumber, 0, true, false, false);
         sendPacket(synPacket);
         
@@ -208,7 +209,6 @@ public class TCPSender {
         while (!connectionClosed) {
             try {
                 socket.receive(datagram);
-                System.out.println("RECEIVED PACKET");
                 byte[] received = Arrays.copyOf(datagram.getData(), datagram.getLength());
                 TCPPacket packet = TCPPacket.deserialize(received);
                 
