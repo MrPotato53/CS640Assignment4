@@ -1,6 +1,6 @@
 import java.io.IOException;
-import TCP.TCPSender;
-import TCP.TCPReceiver;
+import TCPSender;
+import TCPReceiver;
 
 public class TCPend {
     public static void main(String[] args) {

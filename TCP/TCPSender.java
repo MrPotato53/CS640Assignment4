@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
-import TCP.TCPPacket;
+import TCPPacket;
 
 public class TCPSender {
     private static final int MAX_RETRIES = 16;

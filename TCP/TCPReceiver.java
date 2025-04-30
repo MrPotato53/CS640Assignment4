@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
-import TCP.TCPPacket;
+import TCPPacket;
 
 public class TCPReceiver {
     private DatagramSocket socket;
