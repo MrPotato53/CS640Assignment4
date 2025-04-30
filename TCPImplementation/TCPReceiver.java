@@ -68,6 +68,8 @@ public class TCPReceiver {
             throws IOException {
 
         long sentTs = packet.getTimestamp();
+        printPacketInfo("rcv", packet);
+        totalPacketsReceived++;
         
         // Only process SYN before connection established
         if (!connectionEstablished) {
@@ -83,9 +85,6 @@ public class TCPReceiver {
             // ignore all other packets until handshake completes
             return;
         }
-
-        printPacketInfo("rcv", packet);
-        totalPacketsReceived++;
 
         // Reject packets exceeding advertised MTU payload
         int payloadLimit = mtu - 16; // header is 16 bytes
