@@ -296,7 +296,7 @@ public class TCPSender {
 
     private void closeConnection() throws IOException {
         // Send FIN+ACK using the current ACK
-        TCPPacket finPacket = new TCPPacket(null, nextSequenceNumber, lastAckNumber, false, true, true);
+        TCPPacket finPacket = new TCPPacket(null, nextSequenceNumber, lastAckNumber, false, true, false);
         sendPacket(finPacket);
         
         // Wait for FIN-ACK

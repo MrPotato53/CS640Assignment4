@@ -99,9 +99,9 @@ public class TCPReceiver {
 
         // Handle FIN after handshake
         if (packet.isFinFlag()) {
-            // 1) Acknowledge FIN only
+            // Send FIN+ACK using the current ACK
             TCPPacket ackOnly = new TCPPacket(null, 0, packet.getSequenceNumber() + 1,
-                                             false, false, true);
+                                             false, true, true);
             ackOnly.setTimestamp(sentTs);
             sendPacket(ackOnly, senderAddress, senderPort);
 
@@ -169,14 +169,11 @@ public class TCPReceiver {
     }
 
     private void printPacketInfo(String type, TCPPacket packet) {
-        System.out.println("Here 1");
         StringBuilder flags = new StringBuilder();
         if (packet.isSynFlag()) flags.append("S");
         if (packet.isFinFlag()) flags.append("F");
         if (packet.isAckFlag()) flags.append("A");
         if (packet.getData() != null) flags.append("D");
-
-        System.out.println("Here 2");
         
         System.out.printf("%s %.3f %s %d %d %d%n",
             type,
@@ -185,8 +182,6 @@ public class TCPReceiver {
             packet.getSequenceNumber(),
             packet.getLength(),
             packet.getAcknowledgment());
-        
-        System.out.println("Here 3");
     }
 
     private void printStatistics() {
