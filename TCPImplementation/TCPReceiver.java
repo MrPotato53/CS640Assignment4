@@ -41,10 +41,13 @@ public class TCPReceiver {
         // Use MTU for the receive buffer
         byte[] buffer = new byte[mtu];
         DatagramPacket datagram = new DatagramPacket(buffer, buffer.length);
+
+        System.out.println("STARTING CONNECTION");
         
         while (!connectionClosed) {
             try {
                 socket.receive(datagram);
+                System.out.println("RECEIVED PACKET");
                 byte[] received = Arrays.copyOf(datagram.getData(), datagram.getLength());
                 TCPPacket packet = TCPPacket.deserialize(received);
                 
