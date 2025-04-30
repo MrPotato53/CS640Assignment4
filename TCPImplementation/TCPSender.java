@@ -276,7 +276,7 @@ public class TCPSender {
                 while (baseSequenceNumber < ackNumber) {
                     // 1) grab the packet (to get its length)
                     TCPPacket pkt = unackedPackets.get(baseSequenceNumber);
-                    int       len = (pkt != null ? pkt.getDataLength() : 0);
+                    int       len = (pkt != null ? pkt.getLength() : 0);
 
                     // 2) now remove everything
                     unackedPackets.remove(baseSequenceNumber);
