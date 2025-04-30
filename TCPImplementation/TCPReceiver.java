@@ -14,6 +14,7 @@ public class TCPReceiver {
     private int mtu;
     private int windowSize;
     private int expectedSequenceNumber;
+    private int sendSequenceNumber;
     private boolean connectionEstablished;
     private boolean connectionClosed;
     private Map<Integer, byte[]> outOfOrderPackets;
@@ -31,6 +32,7 @@ public class TCPReceiver {
         this.mtu = mtu;
         this.windowSize = windowSize;
         this.expectedSequenceNumber = 0;
+        this.sendSequenceNumber = 0;
         this.connectionEstablished = false;
         this.connectionClosed = false;
         this.outOfOrderPackets = new ConcurrentHashMap<>();
@@ -80,9 +82,10 @@ public class TCPReceiver {
         if (!connectionEstablished) {
             if (packet.isSynFlag() && !packet.isAckFlag()) {
                 // Received SYN, send SYN-ACK
-                TCPPacket synAck = new TCPPacket(null, 0, packet.getSequenceNumber() + 1, 
+                TCPPacket synAck = new TCPPacket(null, sendSequenceNumber, packet.getSequenceNumber() + 1, 
                                                true, false, true);
                 synAck.setTimestamp(sentTs);
+                sendSequenceNumber++;
                 sendPacket(synAck, senderAddress, senderPort);
                 connectionEstablished = true;
                 expectedSequenceNumber = 1;
@@ -101,11 +104,11 @@ public class TCPReceiver {
         // Handle FIN after handshake
         if (packet.isFinFlag()) {
             // Send FIN+ACK using the current ACK
-            TCPPacket ackOnly = new TCPPacket(null, 0, packet.getSequenceNumber() + 1,
+            TCPPacket finAck = new TCPPacket(null, sendSequenceNumber, packet.getSequenceNumber() + 1,
                                              false, true, true);
-            ackOnly.setTimestamp(sentTs);
-            sendPacket(ackOnly, senderAddress, senderPort);
-
+            finAck.setTimestamp(sentTs);
+            sendPacket(finAck, senderAddress, senderPort);
+            sendSequenceNumber++;
             // 2) Close file and mark closed
             connectionClosed = true;
             fileOutputStream.close();
@@ -119,7 +122,7 @@ public class TCPReceiver {
             // Enforce receive window
             if (seqNum < expectedSequenceNumber || seqNum >= expectedSequenceNumber + windowSize) {
                 // drop and ACK current expected
-                TCPPacket ack = new TCPPacket(null, 0, expectedSequenceNumber,
+                TCPPacket ack = new TCPPacket(null, sendSequenceNumber, expectedSequenceNumber,
                                              false, false, true);
                 sendPacket(ack, senderAddress, senderPort);
                 return;
@@ -135,7 +138,7 @@ public class TCPReceiver {
                 processBufferedPackets();
                 
                 // Send cumulative ACK
-                TCPPacket ack = new TCPPacket(null, 0, expectedSequenceNumber, 
+                TCPPacket ack = new TCPPacket(null, sendSequenceNumber, expectedSequenceNumber, 
                                              false, false, true);
                 ack.setTimestamp(sentTs);
                 sendPacket(ack, senderAddress, senderPort);
@@ -145,7 +148,7 @@ public class TCPReceiver {
                 totalOutOfOrderPackets++;
                 
                 // Send duplicate ACK for expected
-                TCPPacket dupAck = new TCPPacket(null, 0, expectedSequenceNumber, 
+                TCPPacket dupAck = new TCPPacket(null, sendSequenceNumber, expectedSequenceNumber, 
                                                 false, false, true);
                 dupAck.setTimestamp(sentTs);
                 sendPacket(dupAck, senderAddress, senderPort);
