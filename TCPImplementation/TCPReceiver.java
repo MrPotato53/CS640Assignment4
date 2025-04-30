@@ -25,7 +25,7 @@ public class TCPReceiver {
 
     public TCPReceiver(int port, String filename, int mtu, int windowSize) 
             throws SocketException, IOException {
-        this.startTime = System.nanoTime();
+        this.startTime = 0;
         this.socket = new DatagramSocket(port);
         this.filename = filename;
         this.mtu = mtu;
@@ -80,7 +80,6 @@ public class TCPReceiver {
         if (!connectionEstablished) {
             if (packet.isSynFlag() && !packet.isAckFlag()) {
                 // Received SYN, send SYN-ACK
-                this.startTime = System.nanoTime();
                 TCPPacket synAck = new TCPPacket(null, 0, packet.getSequenceNumber() + 1, 
                                                true, false, true);
                 synAck.setTimestamp(sentTs);
@@ -171,16 +170,17 @@ public class TCPReceiver {
     }
 
     private void printPacketInfo(String type, TCPPacket packet) {
-        StringBuilder flags = new StringBuilder();
-        if (packet.isSynFlag()) flags.append("S");
-        if (packet.isFinFlag()) flags.append("F");
-        if (packet.isAckFlag()) flags.append("A");
-        if (packet.getData() != null) flags.append("D");
+        if(startTime == 0) {
+            startTime = System.nanoTime();
+        }
         
-        System.out.printf("%s %.3f %s %d %d %d%n",
+        System.out.printf("%s %.3f %s %s %s %s %d %d %d%n",
             type,
             (System.nanoTime() - startTime) / 1e9,
-            flags.toString(),
+            packet.isSynFlag() ? "S" : "-",
+            packet.isFinFlag() ? "F" : "-",
+            packet.isAckFlag() ? "A" : "-",
+            packet.getData() != null ? "D" : "-",
             packet.getSequenceNumber(),
             packet.getLength(),
             packet.getAcknowledgment());

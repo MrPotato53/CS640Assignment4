@@ -338,17 +338,14 @@ public class TCPSender {
         sendPacket(finalAck);
     }
 
-    private void printPacketInfo(String type, TCPPacket packet) {
-        StringBuilder flags = new StringBuilder();
-        if (packet.isSynFlag()) flags.append("S");
-        if (packet.isFinFlag()) flags.append("F");
-        if (packet.isAckFlag()) flags.append("A");
-        if (packet.getData() != null) flags.append("D");
-        
-        System.out.printf("%s %.3f %s %d %d %d%n",
+    private void printPacketInfo(String type, TCPPacket packet) {        
+        System.out.printf("%s %.3f %s %s %s %s %d %d %d%n",
             type,
             (System.nanoTime() - startTime) / 1e9,
-            flags.toString(),
+            packet.isSynFlag() ? "S" : "-",
+            packet.isFinFlag() ? "F" : "-",
+            packet.isAckFlag() ? "A" : "-",
+            packet.getData() != null ? "D" : "-",
             packet.getSequenceNumber(),
             packet.getLength(),
             packet.getAcknowledgment());
