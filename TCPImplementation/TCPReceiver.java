@@ -7,6 +7,7 @@ import java.util.concurrent.*;
 
 public class TCPReceiver {
     private DatagramSocket socket;
+    private long startTime;
     private String filename;
     private int mtu;
     private int windowSize;
@@ -22,6 +23,7 @@ public class TCPReceiver {
 
     public TCPReceiver(int port, String filename, int mtu, int windowSize) 
             throws SocketException, IOException {
+        this.startTime = System.nanoTime();
         this.socket = new DatagramSocket(port);
         this.filename = filename;
         this.mtu = mtu;
@@ -177,7 +179,7 @@ public class TCPReceiver {
         
         System.out.printf("%s %.3f %s %d %d %d%n",
             type,
-            System.nanoTime() / 1e9,
+            (System.nanoTime() - startTime) / 1e9,
             flags.toString(),
             packet.getSequenceNumber(),
             packet.getLength(),

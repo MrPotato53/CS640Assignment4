@@ -6,6 +6,8 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class TCPSender {
+    private long startTime;
+
     private static final int MAX_RETRIES = 16;
     private static final double ALPHA = 0.875;
     private static final double BETA = 0.75;
@@ -39,6 +41,7 @@ public class TCPSender {
 
     public TCPSender(int port, String remoteIP, int remotePort, String filename, int mtu, int windowSize) 
             throws UnknownHostException, SocketException {
+        this.startTime = System.nanoTime();
         this.socket = new DatagramSocket(port);
         this.remoteAddress = InetAddress.getByName(remoteIP);
         this.remotePort = remotePort;
@@ -322,7 +325,7 @@ public class TCPSender {
         
         System.out.printf("%s %.3f %s %d %d %d%n",
             type,
-            System.nanoTime() / 1e9,
+            (System.nanoTime() - startTime) / 1e9,
             flags.toString(),
             packet.getSequenceNumber(),
             packet.getLength(),
