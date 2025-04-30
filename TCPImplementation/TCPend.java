@@ -58,7 +58,7 @@ public class TCPend {
                     printUsage();
                     return;
                 }
-                TCPSender sender = new TCPSender(remoteIP, remotePort, filename, mtu, windowSize);
+                TCPSender sender = new TCPSender(port, remoteIP, remotePort, filename, mtu, windowSize);
                 sender.start();
                 sender.close();
             } else {

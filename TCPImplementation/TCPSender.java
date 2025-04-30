@@ -37,9 +37,9 @@ public class TCPSender {
     private long totalRetransmissions;
     private long totalDuplicateAcks;
 
-    public TCPSender(String remoteIP, int remotePort, String filename, int mtu, int windowSize) 
+    public TCPSender(int port, String remoteIP, int remotePort, String filename, int mtu, int windowSize) 
             throws UnknownHostException, SocketException {
-        this.socket = new DatagramSocket();
+        this.socket = new DatagramSocket(port);
         this.remoteAddress = InetAddress.getByName(remoteIP);
         this.remotePort = remotePort;
         this.filename = filename;
