@@ -275,8 +275,8 @@ public class TCPSender {
                 // Remove acknowledged packets and their retry counts
                 while (baseSequenceNumber < ackNumber) {
                     // 1) grab the packet (to get its length)
-                    TCPPacket pkt = unackedPackets.get(baseSequenceNumber);
-                    int       len = (pkt != null ? pkt.getLength() : 0);
+                    byte[] data = unackedPackets.get(baseSequenceNumber);
+                    int       len = (data != null ? data.length : 0);
 
                     // 2) now remove everything
                     unackedPackets.remove(baseSequenceNumber);
